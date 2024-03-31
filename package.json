@@ -1,0 +1,42 @@
+{
+  "name": "@andreasphil/vue-command-bar",
+  "version": "0.0.0",
+  "description": "Simple `⌘K` command bar for Vue",
+  "author": "Andreas Philippi",
+  "license": "MIT",
+  "type": "module",
+  "repository": "https://github.com/andreasphil/vue-command-bar",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/CommandBar.js",
+      "types": "./dist/CommandBar.vue.d.ts"
+    },
+    "./style.css": {
+      "import": "./dist/style.css"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest run",
+    "build": "vite build; vue-tsc -p tsconfig.lib.json",
+    "preversion": "pnpm test && pnpm build; git add dist/"
+  },
+  "dependencies": {
+    "@andreasphil/design-system": "github:andreasphil/design-system#v0.26.0",
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/user-event": "^14.5.2",
+    "@testing-library/vue": "^8.0.3",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.4.3",
+    "vite": "^5.2.7",
+    "vitest": "^1.4.0",
+    "vue-tsc": "^2.0.7"
+  }
+}
