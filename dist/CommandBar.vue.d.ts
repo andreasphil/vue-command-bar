@@ -57,41 +57,51 @@ export declare function useCommandBar(): {
     open(): void;
 };
 declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToOption<{
-    hotkey?: Partial<Pick<KeyboardEvent, "key" | "metaKey" | "altKey" | "ctrlKey" | "shiftKey">> | undefined;
-    limitResults?: number | undefined;
-    placeholder?: string | undefined;
+    /** When true, closes the command bar when ESC is pressed. */
     allowEscape?: boolean | undefined;
+    /** When true, repeats the most recent command when ⌘. is pressed. */
     allowRepeat?: boolean | undefined;
+    /** Allows you to set a custom hotkey. Defaults to ⌘K. */
+    hotkey?: Partial<Pick<KeyboardEvent, "key" | "metaKey" | "altKey" | "ctrlKey" | "shiftKey">> | undefined;
+    /** Limit the number of results that are shown. Defaults to 10. */
+    limitResults?: number | undefined;
+    /** Changes the placeholder of the search field. Defaults to "Search...". */
+    placeholder?: string | undefined;
 }>, {
+    allowEscape: boolean;
+    allowRepeat: boolean;
     hotkey: () => {
         key: string;
         metaKey: boolean;
     };
     limitResults: number;
     placeholder: string;
-    allowEscape: boolean;
-    allowRepeat: boolean;
 }>, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToOption<{
-    hotkey?: Partial<Pick<KeyboardEvent, "key" | "metaKey" | "altKey" | "ctrlKey" | "shiftKey">> | undefined;
-    limitResults?: number | undefined;
-    placeholder?: string | undefined;
+    /** When true, closes the command bar when ESC is pressed. */
     allowEscape?: boolean | undefined;
+    /** When true, repeats the most recent command when ⌘. is pressed. */
     allowRepeat?: boolean | undefined;
+    /** Allows you to set a custom hotkey. Defaults to ⌘K. */
+    hotkey?: Partial<Pick<KeyboardEvent, "key" | "metaKey" | "altKey" | "ctrlKey" | "shiftKey">> | undefined;
+    /** Limit the number of results that are shown. Defaults to 10. */
+    limitResults?: number | undefined;
+    /** Changes the placeholder of the search field. Defaults to "Search...". */
+    placeholder?: string | undefined;
 }>, {
+    allowEscape: boolean;
+    allowRepeat: boolean;
     hotkey: () => {
         key: string;
         metaKey: boolean;
     };
     limitResults: number;
     placeholder: string;
+}>>>, {
     allowEscape: boolean;
     allowRepeat: boolean;
-}>>>, {
     hotkey: KeyboardShortcut;
     limitResults: number;
     placeholder: string;
-    allowEscape: boolean;
-    allowRepeat: boolean;
 }, {}>, {
     default?(_: {}): any;
     empty?(_: {}): any;

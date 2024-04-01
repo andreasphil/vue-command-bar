@@ -1,6 +1,6 @@
 {
   "name": "@andreasphil/vue-command-bar",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Simple `⌘K` command bar for Vue",
   "author": "Andreas Philippi",
   "license": "MIT",

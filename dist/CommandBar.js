@@ -1,201 +1,201 @@
-import { defineComponent as A, ref as u, watch as G, onMounted as b, onBeforeUnmount as S, computed as D, provide as H, openBlock as c, createElementBlock as p, Fragment as E, renderSlot as R, createElementVNode as n, normalizeClass as r, withKeys as k, withModifiers as C, withDirectives as I, vModelText as J, renderList as Q, createBlock as W, resolveDynamicComponent as X, createCommentVNode as w, toDisplayString as j, inject as Y, nextTick as Z } from "vue";
-const x = /* @__PURE__ */ n("span", { "data-hidden": "" }, "Search pages and actions", -1), ee = ["placeholder"], te = ["onClick"], oe = ["title"], ne = {
+import { defineComponent as A, ref as r, watch as G, onMounted as S, onBeforeUnmount as D, computed as R, provide as H, openBlock as d, createElementBlock as v, Fragment as L, renderSlot as F, createElementVNode as n, normalizeClass as u, withKeys as g, withModifiers as k, toDisplayString as C, withDirectives as I, vModelText as J, renderList as Q, createBlock as W, resolveDynamicComponent as X, createCommentVNode as w, inject as Y } from "vue";
+const Z = { "data-hidden": "" }, x = ["placeholder"], ee = ["onClick"], te = ["title"], oe = {
   key: 0,
   "data-when": "empty"
-}, se = /* @__PURE__ */ n("p", null, "☹️", -1), le = /* @__PURE__ */ n("p", null, "Sorry, couldn't find anything.", -1), F = Symbol();
-function ge() {
-  return Y(F, {
-    registerCommand(...d) {
+}, ne = /* @__PURE__ */ n("p", null, "☹️", -1), se = /* @__PURE__ */ n("p", null, "Sorry, couldn't find anything.", -1), K = Symbol();
+function _e() {
+  return Y(K, {
+    registerCommand(...c) {
       return () => {
       };
     },
-    removeCommand(...d) {
+    removeCommand(...c) {
     },
     open() {
     }
   });
 }
-const ae = /* @__PURE__ */ A({
+const le = /* @__PURE__ */ A({
   __name: "CommandBar",
   props: {
+    allowEscape: { type: Boolean, default: !0 },
+    allowRepeat: { type: Boolean, default: !0 },
     hotkey: { default: () => ({ key: "k", metaKey: !0 }) },
     limitResults: { default: 10 },
-    placeholder: { default: "Search..." },
-    allowEscape: { type: Boolean, default: !0 },
-    allowRepeat: { type: Boolean, default: !0 }
+    placeholder: { default: "Search..." }
   },
-  setup(d) {
-    const y = d, i = u(null), h = u(null), m = u(!1);
-    G(m, (e, t) => {
-      var o, s;
-      e !== t && (e ? (o = i.value) == null || o.showModal() : (s = i.value) == null || s.close());
+  setup(c) {
+    const y = c, i = r(null), $ = r(null), m = r(!1);
+    G(m, (e, o) => {
+      var t, s;
+      e !== o && (e ? (t = i.value) == null || t.showModal() : (s = i.value) == null || s.close());
     });
-    async function _(e = !m.value) {
-      var t;
-      m.value = e, e ? (await Z(), (t = h.value) == null || t.focus()) : (l.value = "", a.value = 0);
+    async function h(e = !m.value) {
+      m.value = e, e || (l.value = "", a.value = 0);
     }
-    function K() {
-      l.value ? (l.value = "", a.value = 0) : _(!1);
+    function j() {
+      l.value ? (l.value = "", a.value = 0) : y.allowEscape && h(!1);
     }
-    function L(e) {
-      Object.entries(y.hotkey).reduce((o, [s, g]) => o && e[s] === g, !0) && (_(), e.preventDefault(), e.stopPropagation());
+    function N(e) {
+      Object.entries(y.hotkey).reduce((t, [s, _]) => t && e[s] === _, !0) && (h(), e.preventDefault(), e.stopPropagation());
     }
-    b(() => {
-      addEventListener("keydown", L);
-    }), S(() => {
-      removeEventListener("keydown", L);
+    S(() => {
+      addEventListener("keydown", N);
+    }), D(() => {
+      removeEventListener("keydown", N);
     });
-    const f = u([]), T = D(
+    const f = r([]), O = R(
       () => f.value.filter((e) => !!e.chord).reduce(
-        (e, t) => e.set(t.chord, t),
+        (e, o) => e.set(o.chord, o),
         /* @__PURE__ */ new Map()
       )
     );
-    function O(...e) {
-      const t = e.map((o) => o.id);
-      return $(...t), f.value = [...f.value, ...e], () => {
-        $(...t);
+    function T(...e) {
+      const o = e.map((t) => t.id);
+      return M(...o), f.value = [...f.value, ...e], () => {
+        M(...o);
       };
     }
-    function $(...e) {
-      f.value = f.value.filter((t) => !e.includes(t.id)), v.value && e.includes(v.value.id) && (v.value = null);
+    function M(...e) {
+      f.value = f.value.filter((o) => !e.includes(o.id)), p.value && e.includes(p.value.id) && (p.value = null);
     }
-    function M(e) {
-      e.action(), v.value = e, _(!1);
+    function B(e) {
+      e.action(), p.value = e, h(!1);
     }
-    const v = u(null);
+    const p = r(null);
     function U() {
-      v.value && M(v.value);
+      p.value && B(p.value);
     }
-    function N(e) {
+    function b(e) {
       e.metaKey && e.key === "." && (e.preventDefault(), e.stopPropagation(), U());
     }
-    b(() => {
-      addEventListener("keydown", N);
-    }), S(() => {
-      removeEventListener("keydown", N);
+    S(() => {
+      addEventListener("keydown", b);
+    }), D(() => {
+      removeEventListener("keydown", b);
     });
-    const l = u(""), a = u(0), B = D(() => {
+    const l = r(""), a = r(0), E = R(() => {
       if (!l.value)
         return [];
-      const e = l.value.toLowerCase().split(" "), t = f.value.filter((s) => {
-        const g = [s.name, ...s.alias ?? [], s.groupName ?? ""].join(" ").toLowerCase();
-        return e.every((z) => g.includes(z));
-      }).slice(0, y.limitResults), o = T.value.get(l.value);
-      return o && t.unshift({ ...o, chordMatch: !0 }), t;
+      const e = l.value.toLowerCase().split(" "), o = f.value.filter((s) => {
+        const _ = [s.name, ...s.alias ?? [], s.groupName ?? ""].join(" ").toLowerCase();
+        return e.every((z) => _.includes(z));
+      }).slice(0, y.limitResults), t = O.value.get(l.value);
+      return t && o.unshift({ ...t, chordMatch: !0 }), o;
     });
     function V() {
       const e = a.value + 1;
-      a.value = Math.min(B.value.length - 1, e);
+      a.value = Math.min(E.value.length - 1, e);
     }
     function q() {
       a.value = Math.max(a.value - 1, 0);
     }
     function P() {
-      const e = B.value[a.value];
-      e && M(e);
+      const e = E.value[a.value];
+      e && B(e);
     }
-    return H(F, {
-      registerCommand: O,
-      removeCommand: $,
-      open: () => _(!0)
-    }), (e, t) => (c(), p(E, null, [
-      R(e.$slots, "default"),
+    return H(K, {
+      registerCommand: T,
+      removeCommand: M,
+      open: () => h(!0)
+    }), (e, o) => (d(), v(L, null, [
+      F(e.$slots, "default"),
       n("dialog", {
-        class: r(e.$style.commandBar),
-        onClose: t[1] || (t[1] = (o) => m.value = !1),
+        class: u(e.$style.commandBar),
+        onClose: o[1] || (o[1] = (t) => m.value = !1),
         onKeydown: [
-          t[2] || (t[2] = k(C((o) => V(), ["stop", "prevent"]), ["down"])),
-          t[3] || (t[3] = k(C((o) => P(), ["stop", "prevent"]), ["enter"])),
-          t[4] || (t[4] = k(C((o) => K(), ["stop", "prevent"]), ["escape"])),
-          t[5] || (t[5] = k(C((o) => q(), ["stop", "prevent"]), ["up"]))
+          o[2] || (o[2] = g(k((t) => V(), ["stop", "prevent"]), ["down"])),
+          o[3] || (o[3] = g(k((t) => P(), ["stop", "prevent"]), ["enter"])),
+          o[4] || (o[4] = g(k((t) => j(), ["stop", "prevent"]), ["escape"])),
+          o[5] || (o[5] = g(k((t) => q(), ["stop", "prevent"]), ["up"]))
         ],
         ref_key: "dialogEl",
         ref: i
       }, [
         n("header", {
-          class: r(e.$style.header)
+          class: u(e.$style.header)
         }, [
           n("label", null, [
-            x,
+            n("span", Z, C(e.placeholder), 1),
             I(n("input", {
               placeholder: e.placeholder,
+              autofocus: "",
               ref_key: "searchEl",
-              ref: h,
+              ref: $,
               type: "search",
-              "onUpdate:modelValue": t[0] || (t[0] = (o) => l.value = o)
-            }, null, 8, ee), [
+              "onUpdate:modelValue": o[0] || (o[0] = (t) => l.value = t)
+            }, null, 8, x), [
               [J, l.value]
             ])
           ])
         ], 2),
         n("div", {
-          class: r(e.$style.body),
+          class: u(e.$style.body),
           "data-with-fallback": ""
         }, [
           n("ul", {
-            class: r(e.$style.resultsList)
+            class: u(e.$style.resultsList)
           }, [
-            (c(!0), p(E, null, Q(B.value, (o, s) => (c(), p("li", {
-              key: o.id
+            (d(!0), v(L, null, Q(E.value, (t, s) => (d(), v("li", {
+              key: t.id
             }, [
               n("button", {
-                class: r({
+                class: u({
                   [e.$style.result]: !0,
                   [e.$style.focused]: s === a.value,
-                  [e.$style.chordMatch]: o.chordMatch
+                  [e.$style.chordMatch]: t.chordMatch
                 }),
-                onClick: (g) => M(o)
+                onClick: (_) => B(t)
               }, [
-                o.icon ? (c(), W(X(o.icon), { key: 0 })) : w("", !0),
-                o.groupName ? (c(), p(E, { key: 1 }, [
+                t.icon ? (d(), W(X(t.icon), { key: 0 })) : w("", !0),
+                t.groupName ? (d(), v(L, { key: 1 }, [
                   n("span", {
-                    class: r(e.$style.groupName)
-                  }, j(o.groupName), 3),
+                    class: u(e.$style.groupName)
+                  }, C(t.groupName), 3),
                   n("span", {
-                    class: r(e.$style.groupName)
+                    class: u(e.$style.groupName)
                   }, "›", 2)
                 ], 64)) : w("", !0),
                 n("span", {
                   "data-clamp": "",
-                  title: o.name
-                }, j(o.name), 9, oe),
-                o.chord ? (c(), p("span", {
+                  title: t.name
+                }, C(t.name), 9, te),
+                t.chord ? (d(), v("span", {
                   key: 2,
-                  class: r(e.$style.chord)
-                }, j(o.chord), 3)) : w("", !0)
-              ], 10, te)
+                  class: u(e.$style.chord)
+                }, C(t.chord), 3)) : w("", !0)
+              ], 10, ee)
             ]))), 128))
           ], 2),
-          l.value ? (c(), p("div", ne, [
-            R(e.$slots, "empty", {}, () => [
-              se,
-              le
+          l.value ? (d(), v("div", oe, [
+            F(e.$slots, "empty", {}, () => [
+              ne,
+              se
             ])
           ])) : w("", !0)
         ], 2)
       ], 34)
     ], 64));
   }
-}), re = "_commandBar_cfej6_6", ue = "_body_cfej6_11", ce = "_resultsList_cfej6_20", de = "_result_cfej6_20", ie = "_focused_cfej6_44", me = "_chordMatch_cfej6_48", fe = "_groupName_cfej6_56", ve = "_chord_cfej6_48", pe = {
-  commandBar: re,
+}), ae = "_commandBar_f90uu_6", ue = "_body_f90uu_11", re = "_resultsList_f90uu_20", de = "_result_f90uu_20", ce = "_focused_f90uu_44", ie = "_chordMatch_f90uu_48", me = "_groupName_f90uu_56", fe = "_chord_f90uu_48", pe = {
+  commandBar: ae,
   body: ue,
-  resultsList: ce,
+  resultsList: re,
   result: de,
-  focused: ie,
-  chordMatch: me,
-  groupName: fe,
-  chord: ve
-}, ye = (d, y) => {
-  const i = d.__vccOpts || d;
-  for (const [h, m] of y)
-    i[h] = m;
+  focused: ce,
+  chordMatch: ie,
+  groupName: me,
+  chord: fe
+}, ve = (c, y) => {
+  const i = c.__vccOpts || c;
+  for (const [$, m] of y)
+    i[$] = m;
   return i;
-}, he = {
+}, ye = {
   $style: pe
-}, ke = /* @__PURE__ */ ye(ae, [["__cssModules", he]]);
+}, ge = /* @__PURE__ */ ve(le, [["__cssModules", ye]]);
 export {
-  F as CommandBarContext,
-  ke as default,
-  ge as useCommandBar
+  K as CommandBarContext,
+  ge as default,
+  _e as useCommandBar
 };
