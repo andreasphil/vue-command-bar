@@ -26,6 +26,13 @@ export type Command = {
     icon?: Component;
     /** Callback to run when the command is invoked. */
     action: () => void;
+    /**
+     * Used for sorting. Items with a higher weight will always appear before
+     * items with a lower weight.
+     *
+     * @default 0
+     */
+    weight?: number;
 };
 export declare const CommandBarContext: InjectionKey<{
     /**
@@ -42,7 +49,7 @@ export declare const CommandBarContext: InjectionKey<{
      */
     removeCommand: (...toRemove: string[]) => void;
     /** Manually open the command bar. */
-    open: () => void;
+    open: (query?: string) => void;
 }>;
 /**
  * Returns access to the context of the command bar, which allows you to
@@ -54,7 +61,7 @@ export declare const CommandBarContext: InjectionKey<{
 export declare function useCommandBar(): {
     registerCommand(..._: Command[]): () => void;
     removeCommand(..._: string[]): void;
-    open(): void;
+    open(_?: string): void;
 };
 declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToOption<{
     /** When true, closes the command bar when ESC is pressed. */
