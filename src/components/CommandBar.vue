@@ -202,10 +202,15 @@ function runFocusedCommand() {
  * Public interface                                   *
  * -------------------------------------------------- */
 
+function openWithQuery(initialQuery = "") {
+  query.value = initialQuery;
+  toggle(true);
+}
+
 provide(CommandBarContext, {
   registerCommand,
   removeCommand,
-  open: () => toggle(true),
+  open: openWithQuery,
 });
 </script>
 
@@ -266,7 +271,7 @@ export const CommandBarContext: InjectionKey<{
   removeCommand: (...toRemove: string[]) => void;
 
   /** Manually open the command bar. */
-  open: () => void;
+  open: (query?: string) => void;
 }> = Symbol();
 
 /**
@@ -284,7 +289,7 @@ export function useCommandBar() {
 
     removeCommand(..._: string[]) {},
 
-    open() {},
+    open(_?: string) {},
   });
 }
 </script>
@@ -293,7 +298,6 @@ export function useCommandBar() {
   <slot />
 
   <dialog
-    :class="$style.commandBar"
     @close="isOpen = false"
     @keydown.down.stop.prevent="moveFocusDown()"
     @keydown.enter.stop.prevent="runFocusedCommand()"
@@ -353,11 +357,6 @@ export function useCommandBar() {
 /* -------------------------------------------------- *
  * Dialog                                             *
  * -------------------------------------------------- */
-
-.commandBar {
-  width: min(30rem, calc(100dvw - 2rem));
-  max-width: unset;
-}
 
 .header {
   font-weight: normal;
