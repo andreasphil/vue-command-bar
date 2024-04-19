@@ -21,6 +21,7 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
+    "test:watch": "vitest",
     "build": "vite build; vue-tsc -p tsconfig.lib.json",
     "preversion": "pnpm test && pnpm build; git add dist/"
   },
