@@ -810,6 +810,26 @@ describe("CommandBar", () => {
       expect(screen.getAllByRole("button")).toHaveLength(1);
     });
 
+    test("ranks results by weight", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn(), weight: 20 });
+          registerCommand({ id: "3", name: "3A", action: vi.fn(), weight: 10 });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a");
+      const els = screen.getAllByRole("button");
+      expect(els[0]).toHaveTextContent("2A");
+      expect(els[1]).toHaveTextContent("3A");
+      expect(els[2]).toHaveTextContent("1A");
+    });
+
     test("shows the default empty state when no result is found", async () => {
       const example = defineComponent({
         template: `<span />`,

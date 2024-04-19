@@ -180,7 +180,8 @@ const filteredCommands = computed(() => {
 
       return queryTokens.every((token) => commandStr.includes(token));
     })
-    .slice(0, props.limitResults);
+    .slice(0, props.limitResults)
+    .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
 
   if (matchingChord) result.unshift({ ...matchingChord, chordMatch: true });
 
@@ -255,6 +256,14 @@ export type Command = {
 
   /** Callback to run when the command is invoked. */
   action: () => void;
+
+  /**
+   * Used for sorting. Items with a higher weight will always appear before
+   * items with a lower weight.
+   *
+   * @default 0
+   */
+  weight?: number;
 };
 
 export const CommandBarContext: InjectionKey<{
