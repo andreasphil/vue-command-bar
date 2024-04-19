@@ -497,6 +497,26 @@ describe("CommandBar", () => {
       expect(screen.getByRole("button", { name: "2A y" })).toBeInTheDocument();
     });
 
+    test("does not show the same command twice when found by chord and query", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({
+            id: "1",
+            name: "1A",
+            chord: "1A",
+            action: vi.fn(),
+          });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "1A");
+      expect(screen.getAllByRole("button", { name: "1A 1A" })).toHaveLength(1);
+    });
+
     test("highlights matches by chord", async () => {
       const example = defineComponent({
         template: `<span />`,

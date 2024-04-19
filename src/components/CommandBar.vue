@@ -166,10 +166,14 @@ const focusedResult = ref(0);
 const filteredCommands = computed(() => {
   if (!query.value) return [];
 
+  const matchingChord = chords.value.get(query.value);
   const queryTokens = query.value.toLowerCase().split(" ");
 
   const result: Array<Command & { chordMatch?: true }> = commands.value
     .filter((i) => {
+      // Do not include the same item twice if it's already included via chord
+      if (matchingChord && matchingChord.id === i.id) return false;
+
       const commandStr = [i.name, ...(i.alias ?? []), i.groupName ?? ""]
         .join(" ")
         .toLowerCase();
@@ -178,7 +182,6 @@ const filteredCommands = computed(() => {
     })
     .slice(0, props.limitResults);
 
-  const matchingChord = chords.value.get(query.value);
   if (matchingChord) result.unshift({ ...matchingChord, chordMatch: true });
 
   return result;
