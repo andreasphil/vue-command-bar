@@ -13,10 +13,19 @@ import {
 import { Component, defineComponent } from "vue";
 import CommandBar, { useCommandBar } from "./CommandBar.vue";
 
-function withCommandBar(inner: Component) {
+type CommandBarProps = InstanceType<typeof CommandBar>["$props"];
+
+function withCommandBar(inner: Component, props?: CommandBarProps) {
   const Wrapper = defineComponent({
     components: { CommandBar, inner },
-    template: `<CommandBar><inner /></CommandBar>`,
+    setup() {
+      return { commandBarProps: props ?? {} };
+    },
+    template: `
+      <CommandBar v-bind="commandBarProps">
+        <inner />
+      </CommandBar>
+    `,
   });
 
   return Wrapper;
@@ -122,13 +131,31 @@ describe("CommandBar", () => {
       expect(showModal).toHaveBeenCalled();
     });
 
+    test("sets a default search when opening through the composable method", async () => {
+      const example = defineComponent({
+        template: `<button @click="open('foo')">Open</button>`,
+        setup() {
+          const { open } = useCommandBar();
+          return { open };
+        },
+      });
+
+      const showModal = vi.fn();
+      HTMLDialogElement.prototype.showModal = showModal;
+      render(withCommandBar(example));
+
+      await user.click(screen.getByRole("button", { name: "Open" }));
+      expect(showModal).toHaveBeenCalled();
+      expect(screen.getByRole("searchbox")).toHaveValue("foo");
+    });
+
     test("closes when escape is pressed", async () => {
       const close = vi.fn();
       HTMLDialogElement.prototype.close = close;
       render(CommandBar);
 
       await user.keyboard("{Meta>}k{/Meta}");
-      await user.click(screen.getByLabelText("Search..."));
+      await user.click(screen.getByRole("searchbox"));
       await user.keyboard("{Escape}");
       expect(close).toHaveBeenCalled();
     });
@@ -139,7 +166,7 @@ describe("CommandBar", () => {
       render(CommandBar, { props: { allowEscape: false } });
 
       await user.keyboard("{Meta>}k{/Meta}");
-      await user.click(screen.getByLabelText("Search..."));
+      await user.click(screen.getByRole("searchbox"));
       await user.keyboard("{Escape}");
       expect(close).not.toHaveBeenCalled();
     });
@@ -159,7 +186,7 @@ describe("CommandBar", () => {
       HTMLDialogElement.prototype.close = close;
       render(withCommandBar(example));
 
-      await user.type(screen.getByLabelText("Search..."), "Foo{Enter}");
+      await user.type(screen.getByRole("searchbox"), "Foo{Enter}");
       expect(action).toHaveBeenCalled();
       expect(close).toHaveBeenCalled();
     });
@@ -181,7 +208,7 @@ describe("CommandBar", () => {
 
       render(withCommandBar(example));
 
-      await user.type(screen.getByLabelText("Search..."), "a");
+      await user.type(screen.getByRole("searchbox"), "a");
       expect(screen.getAllByRole("button")).toHaveLength(3);
     });
 
@@ -202,7 +229,7 @@ describe("CommandBar", () => {
 
       render(withCommandBar(example));
 
-      await user.type(screen.getByLabelText("Search..."), "a");
+      await user.type(screen.getByRole("searchbox"), "a");
       expect(screen.getAllByRole("button")).toHaveLength(4); // 3 commands + cleanup
 
       await user.click(screen.getByRole("button", { name: "Cleanup" }));
@@ -230,7 +257,7 @@ describe("CommandBar", () => {
 
       render(withCommandBar(example));
 
-      await user.type(screen.getByLabelText("Search..."), "a");
+      await user.type(screen.getByRole("searchbox"), "a");
       expect(screen.getAllByRole("button")).toHaveLength(4); // 3 commands + cleanup
 
       await user.click(screen.getByRole("button", { name: "Cleanup" }));
@@ -239,88 +266,587 @@ describe("CommandBar", () => {
   });
 
   describe("renders commands", () => {
-    test.todo("limits visible results to 10 by default", async () => {});
+    test("limits visible results to 10 by default", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand(
+            { id: "1", name: "1A", action: vi.fn() },
+            { id: "2", name: "2A", action: vi.fn() },
+            { id: "3", name: "3A", action: vi.fn() },
+            { id: "4", name: "4A", action: vi.fn() },
+            { id: "5", name: "5A", action: vi.fn() },
+            { id: "6", name: "6A", action: vi.fn() },
+            { id: "7", name: "7A", action: vi.fn() },
+            { id: "8", name: "8A", action: vi.fn() },
+            { id: "9", name: "9A", action: vi.fn() },
+            { id: "10", name: "10A", action: vi.fn() },
+            { id: "11", name: "11A", action: vi.fn() }
+          );
+        },
+      });
 
-    test.todo("limits visible results by a custom amount", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("shows the name", async () => {});
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.getAllByRole("button")).toHaveLength(10);
+    });
 
-    test.todo("shows the group name", async () => {});
+    test("limits visible results by a custom amount", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand(
+            { id: "1", name: "1A", action: vi.fn() },
+            { id: "2", name: "2A", action: vi.fn() },
+            { id: "3", name: "3A", action: vi.fn() }
+          );
+        },
+      });
 
-    test.todo("doesn't show an empty group name", async () => {});
+      render(withCommandBar(example, { limitResults: 2 }));
 
-    test.todo("shows the icon", async () => {});
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.getAllByRole("button")).toHaveLength(2);
+    });
 
-    test.todo("doesn't show an empty icon", async () => {});
+    test("shows the name", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+        },
+      });
 
-    test.todo("shows the chord", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("doesn't show an empty chord", async () => {});
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.getByText("1A")).toBeInTheDocument();
+    });
+
+    test("shows the group name", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({
+            id: "1",
+            name: "1A",
+            groupName: "Group",
+            action: vi.fn(),
+          });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(
+        screen.getByRole("button", { name: "Group › 1A" })
+      ).toBeInTheDocument();
+    });
+
+    test("doesn't show an empty group name", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.queryByText("›")).not.toBeInTheDocument();
+    });
+
+    test("shows the icon", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({
+            id: "1",
+            name: "1A",
+            icon: () => "😎",
+            action: vi.fn(),
+          });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.getByText("😎")).toBeInTheDocument();
+    });
+
+    test("shows the chord", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", chord: "x", action: vi.fn() });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.getByText("x")).toBeInTheDocument();
+    });
   });
 
   describe("runs commands", () => {
-    test.todo("runs the focused command on enter", async () => {});
+    test("runs the focused command on enter", async () => {
+      const action = vi.fn();
 
-    test.todo("runs a command on click", async () => {});
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action });
+        },
+      });
 
-    test.todo("runs a command on tab + enter", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("runs the command focused via tab when in doubt", async () => {});
+      await user.type(screen.getByRole("searchbox"), "a{enter}");
+      expect(action).toHaveBeenCalled();
+    });
+
+    test("runs a command on click", async () => {
+      const action = vi.fn();
+
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a");
+      await user.click(screen.getByRole("button", { name: "1A" }));
+      expect(action).toHaveBeenCalled();
+    });
+
+    test.todo("runs a command on tab + enter", async () => {
+      // TODO: Somehow can't get the focus to the command in the test ...
+    });
+
+    test.todo("runs the command focused via tab when in doubt", async () => {
+      // TODO: Somehow can't get the focus to the command in the test ...
+    });
   });
 
   describe("searches and selects commands", () => {
-    test.todo("focuses the first command by default", async () => {});
+    test("focuses the first command by default", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
 
-    test.todo("doesn't show commands when the search is empty", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("finds commands by chord", async () => {});
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.getByRole("button", { name: "1A" })).toHaveClass("focused");
+    });
 
-    test.todo("highlights matches by chord", async () => {});
+    test("doesn't show commands when the search is empty", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
 
-    test.todo("doesn't highlight matches not found via chord", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("shows chord matches before other commands", async () => {});
+      await user.clear(screen.getByRole("searchbox"));
+      expect(screen.queryByRole("button")).toBeFalsy();
+    });
 
-    test.todo("clears search on escape", async () => {});
+    test("finds commands by chord", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", chord: "x", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", chord: "y", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", chord: "z", action: vi.fn() });
+        },
+      });
 
-    test.todo("moves focus down", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("moves focus up", async () => {});
+      await user.type(screen.getByRole("searchbox"), "y");
+      expect(screen.getByRole("button", { name: "2A y" })).toBeInTheDocument();
+    });
 
-    test.todo("doesn't move focus before the first item", async () => {});
+    test("highlights matches by chord", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", chord: "x", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", chord: "y", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", chord: "z", action: vi.fn() });
+        },
+      });
 
-    test.todo("doesn't move focus past the last item", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("starts focus at the first item", async () => {});
+      await user.type(screen.getByRole("searchbox"), "y");
+      expect(screen.getByRole("button", { name: "2A y" })).toHaveClass(
+        "chordMatch"
+      );
+    });
 
-    test.todo("finds commands by name", async () => {});
+    test("doesn't highlight matches not found via chord", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", chord: "x", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", chord: "y", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", chord: "z", action: vi.fn() });
+        },
+      });
 
-    test.todo("finds commands by group name", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("finds commands by alias", async () => {});
+      await user.type(screen.getByRole("searchbox"), "2A");
+      expect(screen.getByRole("button", { name: "2A y" })).not.toHaveClass(
+        "chordMatch"
+      );
+    });
 
-    test.todo(
-      "finds commands by a combination of name, group name, and alias",
-      () => {}
-    );
+    test("shows chord matches before other commands", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", chord: "x", action: vi.fn() });
+          registerCommand({ id: "2", name: "2B", chord: "a", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", chord: "z", action: vi.fn() });
+        },
+      });
 
-    test.todo("narrows selection with additional search terms", async () => {});
+      render(withCommandBar(example));
 
-    test.todo("searches case-insensitive", async () => {});
+      await user.type(screen.getByRole("searchbox"), "a");
+      const chordMatch = screen.getByRole("button", { name: "2B a" });
+      const nextMatch = screen.getByRole("button", { name: "1A x" });
+      expect(chordMatch.compareDocumentPosition(nextMatch)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
+    });
 
-    test.todo(
-      "shows the default empty state when no result is found",
-      () => {}
-    );
+    test("clears search on escape", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
 
-    test.todo(
-      "shows a custom empty state when no result is found",
-      async () => {}
-    );
+      render(withCommandBar(example));
 
-    test.todo(
-      "doesn't show the empty state if search is empty",
-      async () => {}
-    );
+      const el = screen.getByRole("searchbox");
+      await user.type(el, "something");
+      expect(el).toHaveValue("something");
+      await user.type(el, "{escape}");
+      expect(el).toHaveValue("");
+    });
+
+    test("moves focus down", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      const { container } = render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a{down}");
+      expect(screen.getByRole("button", { name: "2A" })).toHaveClass("focused");
+      expect(container.querySelectorAll(".focused")).toHaveLength(1);
+    });
+
+    test("moves focus up", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      const { container } = render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a{down}{down}{up}");
+      expect(screen.getByRole("button", { name: "2A" })).toHaveClass("focused");
+      expect(container.querySelectorAll(".focused")).toHaveLength(1);
+    });
+
+    test("doesn't move focus before the first item", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      const { container } = render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a{up}");
+      expect(screen.getByRole("button", { name: "1A" })).toHaveClass("focused");
+      expect(container.querySelectorAll(".focused")).toHaveLength(1);
+    });
+
+    test("doesn't move focus past the last item", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      const { container } = render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a{down}{down}{down}");
+      expect(screen.getByRole("button", { name: "3A" })).toHaveClass("focused");
+      expect(container.querySelectorAll(".focused")).toHaveLength(1);
+    });
+
+    test("starts focus at the first item", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      const { container } = render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "a");
+      expect(screen.getByRole("button", { name: "1A" })).toHaveClass("focused");
+      expect(container.querySelectorAll(".focused")).toHaveLength(1);
+    });
+
+    test("finds commands by name", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "1A");
+      expect(screen.getByRole("button", { name: "1A" })).toBeInTheDocument();
+      expect(screen.getAllByRole("button")).toHaveLength(1);
+    });
+
+    test("finds commands by group name", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({
+            id: "1",
+            name: "1A",
+            groupName: "GX",
+            action: vi.fn(),
+          });
+          registerCommand({
+            id: "2",
+            name: "2A",
+            groupName: "GY",
+            action: vi.fn(),
+          });
+          registerCommand({
+            id: "3",
+            name: "3A",
+            groupName: "GZ",
+            action: vi.fn(),
+          });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "GX");
+      expect(
+        screen.getByRole("button", { name: "GX › 1A" })
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole("button")).toHaveLength(1);
+    });
+
+    test("finds commands by alias", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({
+            id: "1",
+            name: "1A",
+            alias: ["AX"],
+            action: vi.fn(),
+          });
+          registerCommand({
+            id: "2",
+            name: "2A",
+            alias: ["AY"],
+            action: vi.fn(),
+          });
+          registerCommand({
+            id: "3",
+            name: "3A",
+            alias: ["AZ"],
+            action: vi.fn(),
+          });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "AX");
+      expect(screen.getByRole("button", { name: "1A" })).toBeInTheDocument();
+      expect(screen.getAllByRole("button")).toHaveLength(1);
+    });
+
+    test("narrows selection with additional search terms", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A One", action: vi.fn() });
+          registerCommand({ id: "2", name: "1A Two", action: vi.fn() });
+          registerCommand({ id: "3", name: "1A Three", action: vi.fn() });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "1 tw");
+      expect(
+        screen.getByRole("button", { name: "1A Two" })
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole("button")).toHaveLength(1);
+    });
+
+    test("searches case-insensitive", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "1a");
+      expect(screen.getByRole("button", { name: "1A" })).toBeInTheDocument();
+      expect(screen.getAllByRole("button")).toHaveLength(1);
+    });
+
+    test("shows the default empty state when no result is found", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.type(screen.getByRole("searchbox"), "foo");
+      expect(screen.queryAllByRole("button")).toHaveLength(0);
+      expect(
+        screen.getByText("Sorry, couldn't find anything.")
+      ).toBeInTheDocument();
+    });
+
+    test("shows a custom empty state when no result is found", async () => {
+      const component = defineComponent({
+        components: { CommandBar },
+        template: `
+            <CommandBar v-bind="commandBarProps">
+              <span />
+              <template #empty>
+                <p>Custom empty state</p>
+              </template>
+            </CommandBar>
+          `,
+      });
+
+      render(component);
+
+      await user.type(screen.getByRole("searchbox"), "foo");
+      expect(screen.getByText("Custom empty state")).toBeInTheDocument();
+    });
+
+    test("doesn't show the empty state if search is empty", async () => {
+      const example = defineComponent({
+        template: `<span />`,
+        setup() {
+          const { registerCommand } = useCommandBar();
+          registerCommand({ id: "1", name: "1A", action: vi.fn() });
+          registerCommand({ id: "2", name: "2A", action: vi.fn() });
+          registerCommand({ id: "3", name: "3A", action: vi.fn() });
+        },
+      });
+
+      render(withCommandBar(example));
+
+      await user.clear(screen.getByRole("searchbox"));
+      expect(screen.queryAllByRole("button")).toHaveLength(0);
+      expect(
+        screen.queryByText("Sorry, couldn't find anything.")
+      ).not.toBeInTheDocument();
+    });
   });
 });
