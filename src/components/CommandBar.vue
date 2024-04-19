@@ -358,6 +358,11 @@ export function useCommandBar() {
   max-width: unset;
 }
 
+.header {
+  font-weight: normal;
+  margin: 0;
+}
+
 .body {
   max-height: calc(80dvh - 12rem);
   overflow: auto;

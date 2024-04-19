@@ -19,7 +19,7 @@ onMounted(() => {
 </template>
 
 <style>
-@import "@andreasphil/design-system/dist/index.min.css" layer(theme);
+@import "@andreasphil/design-system/style.css" layer(theme);
 
 main {
   text-align: center;
