@@ -326,6 +326,7 @@ export function useCommandBar() {
               [$style.chordMatch]: c.chordMatch,
             }"
             @click="runCommand(c)"
+            @keydown.enter.stop.prevent="runCommand(c)"
           >
             <component v-if="c.icon" :is="c.icon" />
             <template v-if="c.groupName">
