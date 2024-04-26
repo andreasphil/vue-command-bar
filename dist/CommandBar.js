@@ -1,10 +1,10 @@
-import { defineComponent as W, ref as d, watch as A, onMounted as b, onBeforeUnmount as S, computed as D, provide as G, openBlock as c, createElementBlock as h, Fragment as B, renderSlot as K, createElementVNode as l, withKeys as _, withModifiers as g, normalizeClass as i, toDisplayString as C, withDirectives as H, vModelText as I, renderList as J, createBlock as X, resolveDynamicComponent as Y, createCommentVNode as $, inject as Z } from "vue";
+import { defineComponent as Q, ref as d, watch as W, onMounted as N, onBeforeUnmount as S, computed as D, provide as A, openBlock as c, createElementBlock as y, Fragment as L, renderSlot as R, createElementVNode as l, withKeys as _, withModifiers as g, normalizeClass as i, toDisplayString as C, withDirectives as G, vModelText as I, renderList as J, createBlock as X, resolveDynamicComponent as Y, createCommentVNode as $, inject as Z } from "vue";
 const x = { "data-hidden": "" }, ee = ["placeholder"], te = ["onClick", "onKeydown"], oe = ["title"], ne = {
   key: 0,
   "data-when": "empty"
-}, le = /* @__PURE__ */ l("p", null, "☹️", -1), se = /* @__PURE__ */ l("p", null, "Sorry, couldn't find anything.", -1), R = Symbol();
+}, le = /* @__PURE__ */ l("p", null, "☹️", -1), se = /* @__PURE__ */ l("p", null, "Sorry, couldn't find anything.", -1), F = Symbol();
 function ge() {
-  return Z(R, {
+  return Z(F, {
     registerCommand(...r) {
       return () => {
       };
@@ -15,7 +15,7 @@ function ge() {
     }
   });
 }
-const ae = /* @__PURE__ */ W({
+const ae = /* @__PURE__ */ Q({
   __name: "CommandBar",
   props: {
     allowEscape: { type: Boolean, default: !0 },
@@ -25,32 +25,36 @@ const ae = /* @__PURE__ */ W({
     placeholder: { default: "Search..." }
   },
   setup(r) {
-    const y = r, m = d(null), M = d(null), p = d(!1);
-    A(p, (e, o) => {
+    const h = r, m = d(null), M = d(null), p = d(!1);
+    W(p, (e, o) => {
       var t, n;
       e !== o && (e ? (t = m.value) == null || t.showModal() : (n = m.value) == null || n.close());
     });
     async function k(e = !p.value) {
       p.value = e, e || (s.value = "", a.value = 0);
     }
-    function F() {
-      s.value ? (s.value = "", a.value = 0) : y.allowEscape && k(!1);
+    function O() {
+      s.value ? (s.value = "", a.value = 0) : h.allowEscape && k(!1);
     }
-    function L(e) {
-      Object.entries(y.hotkey).reduce((t, [n, u]) => t && e[n] === u, !0) && (k(), e.preventDefault(), e.stopPropagation());
+    function b(e) {
+      const o = Object.assign(
+        { altKey: !1, ctrlKey: !1, metaKey: !1, shiftKey: !1, key: "" },
+        h.hotkey
+      );
+      Object.entries(o).reduce((n, [u, B]) => n && e[u] === B, !0) && (k(), e.preventDefault(), e.stopPropagation());
     }
-    b(() => {
-      addEventListener("keydown", L);
+    N(() => {
+      addEventListener("keydown", b);
     }), S(() => {
-      removeEventListener("keydown", L);
+      removeEventListener("keydown", b);
     });
-    const v = d([]), O = D(
+    const v = d([]), T = D(
       () => v.value.filter((e) => !!e.chord).reduce(
         (e, o) => e.set(o.chord, o),
         /* @__PURE__ */ new Map()
       )
     );
-    function T(...e) {
+    function U(...e) {
       const o = e.map((t) => t.id);
       return E(...o), v.value = [...v.value, ...e], () => {
         E(...o);
@@ -63,55 +67,55 @@ const ae = /* @__PURE__ */ W({
       e.action(), f.value = e, k(!1);
     }
     const f = d(null);
-    function U() {
+    function V() {
       f.value && w(f.value);
     }
-    function N(e) {
-      e.metaKey && e.key === "." && (e.preventDefault(), e.stopPropagation(), U());
+    function K(e) {
+      e.metaKey && e.key === "." && (e.preventDefault(), e.stopPropagation(), V());
     }
-    b(() => {
-      addEventListener("keydown", N);
+    N(() => {
+      addEventListener("keydown", K);
     }), S(() => {
-      removeEventListener("keydown", N);
+      removeEventListener("keydown", K);
     });
     const s = d(""), a = d(0), j = D(() => {
       if (!s.value)
         return [];
-      const e = O.value.get(s.value), o = s.value.toLowerCase().split(" "), t = v.value.filter((n) => {
+      const e = T.value.get(s.value), o = s.value.toLowerCase().split(" "), t = v.value.filter((n) => {
         if (e && e.id === n.id)
           return !1;
         const u = [n.name, ...n.alias ?? [], n.groupName ?? ""].join(" ").toLowerCase();
-        return o.every((Q) => u.includes(Q));
-      }).slice(0, y.limitResults).sort((n, u) => (u.weight ?? 0) - (n.weight ?? 0));
+        return o.every((B) => u.includes(B));
+      }).slice(0, h.limitResults).sort((n, u) => (u.weight ?? 0) - (n.weight ?? 0));
       return e && t.unshift({ ...e, chordMatch: !0 }), t;
     });
-    function V() {
+    function q() {
       const e = a.value + 1;
       a.value = Math.min(j.value.length - 1, e);
     }
-    function q() {
+    function P() {
       a.value = Math.max(a.value - 1, 0);
     }
-    function P() {
+    function z() {
       const e = j.value[a.value];
       e && w(e);
     }
-    function z(e = "") {
+    function H(e = "") {
       s.value = e, k(!0);
     }
-    return G(R, {
-      registerCommand: T,
+    return A(F, {
+      registerCommand: U,
       removeCommand: E,
-      open: z
-    }), (e, o) => (c(), h(B, null, [
-      K(e.$slots, "default"),
+      open: H
+    }), (e, o) => (c(), y(L, null, [
+      R(e.$slots, "default"),
       l("dialog", {
         onClose: o[1] || (o[1] = (t) => p.value = !1),
         onKeydown: [
-          o[2] || (o[2] = _(g((t) => V(), ["stop", "prevent"]), ["down"])),
-          o[3] || (o[3] = _(g((t) => P(), ["stop", "prevent"]), ["enter"])),
-          o[4] || (o[4] = _(g((t) => F(), ["stop", "prevent"]), ["escape"])),
-          o[5] || (o[5] = _(g((t) => q(), ["stop", "prevent"]), ["up"]))
+          o[2] || (o[2] = _(g((t) => q(), ["stop", "prevent"]), ["down"])),
+          o[3] || (o[3] = _(g((t) => z(), ["stop", "prevent"]), ["enter"])),
+          o[4] || (o[4] = _(g((t) => O(), ["stop", "prevent"]), ["escape"])),
+          o[5] || (o[5] = _(g((t) => P(), ["stop", "prevent"]), ["up"]))
         ],
         ref_key: "dialogEl",
         ref: m
@@ -121,7 +125,7 @@ const ae = /* @__PURE__ */ W({
         }, [
           l("label", null, [
             l("span", x, C(e.placeholder), 1),
-            H(l("input", {
+            G(l("input", {
               placeholder: e.placeholder,
               autofocus: "",
               ref_key: "searchEl",
@@ -140,7 +144,7 @@ const ae = /* @__PURE__ */ W({
           l("ul", {
             class: i(e.$style.resultsList)
           }, [
-            (c(!0), h(B, null, J(j.value, (t, n) => (c(), h("li", {
+            (c(!0), y(L, null, J(j.value, (t, n) => (c(), y("li", {
               key: t.id
             }, [
               l("button", {
@@ -153,7 +157,7 @@ const ae = /* @__PURE__ */ W({
                 onKeydown: _(g((u) => w(t), ["stop", "prevent"]), ["enter"])
               }, [
                 t.icon ? (c(), X(Y(t.icon), { key: 0 })) : $("", !0),
-                t.groupName ? (c(), h(B, { key: 1 }, [
+                t.groupName ? (c(), y(L, { key: 1 }, [
                   l("span", {
                     class: i(e.$style.groupName)
                   }, C(t.groupName), 3),
@@ -165,15 +169,15 @@ const ae = /* @__PURE__ */ W({
                   "data-clamp": "",
                   title: t.name
                 }, C(t.name), 9, oe),
-                t.chord ? (c(), h("span", {
+                t.chord ? (c(), y("span", {
                   key: 2,
                   class: i(e.$style.chord)
                 }, C(t.chord), 3)) : $("", !0)
               ], 42, te)
             ]))), 128))
           ], 2),
-          s.value ? (c(), h("div", ne, [
-            K(e.$slots, "empty", {}, () => [
+          s.value ? (c(), y("div", ne, [
+            R(e.$slots, "empty", {}, () => [
               le,
               se
             ])
@@ -191,16 +195,16 @@ const ae = /* @__PURE__ */ W({
   chordMatch: me,
   groupName: pe,
   chord: ve
-}, he = (r, y) => {
+}, ye = (r, h) => {
   const m = r.__vccOpts || r;
-  for (const [M, p] of y)
+  for (const [M, p] of h)
     m[M] = p;
   return m;
-}, ye = {
+}, he = {
   $style: fe
-}, ke = /* @__PURE__ */ he(ae, [["__cssModules", ye]]);
+}, ke = /* @__PURE__ */ ye(ae, [["__cssModules", he]]);
 export {
-  R as CommandBarContext,
+  F as CommandBarContext,
   ke as default,
   ge as useCommandBar
 };
