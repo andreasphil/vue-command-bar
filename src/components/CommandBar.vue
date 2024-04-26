@@ -71,7 +71,15 @@ function onEscape() {
 }
 
 function onToggleShortcut(e: KeyboardEvent) {
-  let match = Object.entries(props.hotkey).reduce((match, [key, value]) => {
+  const strictHotkey = Object.assign<
+    Required<KeyboardShortcut>,
+    KeyboardShortcut
+  >(
+    { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, key: "" },
+    props.hotkey
+  );
+
+  let match = Object.entries(strictHotkey).reduce((match, [key, value]) => {
     return match && e[key as keyof KeyboardEvent] === value;
   }, true);
 

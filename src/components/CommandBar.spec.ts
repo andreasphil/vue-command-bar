@@ -114,6 +114,15 @@ describe("CommandBar", () => {
       expect(showModal).toHaveBeenCalled();
     });
 
+    test("does not open when additional keys are pressed", async () => {
+      const showModal = vi.fn();
+      HTMLDialogElement.prototype.showModal = showModal;
+      render(CommandBar);
+
+      await user.keyboard("{Meta>}{Shift>}k{/Meta}{/Shift}");
+      expect(showModal).not.toHaveBeenCalled();
+    });
+
     test("opens when the composable method is called", async () => {
       const example = defineComponent({
         template: `<button @click="open()">Open</button>`,
