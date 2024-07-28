@@ -26,18 +26,18 @@
     "preversion": "pnpm test && pnpm build; git add dist/"
   },
   "dependencies": {
-    "@andreasphil/design-system": "github:andreasphil/design-system#v0.28.0",
-    "vue": "^3.4.23"
+    "@andreasphil/design-system": "github:andreasphil/design-system#v0.33.0",
+    "vue": "^3.4.34"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/user-event": "^14.5.2",
-    "@testing-library/vue": "^8.0.3",
-    "@vitejs/plugin-vue": "^5.0.4",
-    "jsdom": "^24.0.0",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.9",
-    "vitest": "^1.5.0",
-    "vue-tsc": "^2.0.13"
+    "@testing-library/vue": "^8.1.0",
+    "@vitejs/plugin-vue": "^5.1.1",
+    "jsdom": "^24.1.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5",
+    "vitest": "^2.0.4",
+    "vue-tsc": "^2.0.29"
   }
 }
