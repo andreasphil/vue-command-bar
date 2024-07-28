@@ -79,11 +79,9 @@ const ae = /* @__PURE__ */ Q({
       removeEventListener("keydown", K);
     });
     const s = d(""), a = d(0), j = D(() => {
-      if (!s.value)
-        return [];
+      if (!s.value) return [];
       const e = T.value.get(s.value), o = s.value.toLowerCase().split(" "), t = v.value.filter((n) => {
-        if (e && e.id === n.id)
-          return !1;
+        if (e && e.id === n.id) return !1;
         const u = [n.name, ...n.alias ?? [], n.groupName ?? ""].join(" ").toLowerCase();
         return o.every((B) => u.includes(B));
       }).slice(0, h.limitResults).sort((n, u) => (u.weight ?? 0) - (n.weight ?? 0));

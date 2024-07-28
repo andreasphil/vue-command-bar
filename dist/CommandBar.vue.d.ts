@@ -65,15 +65,15 @@ export declare function useCommandBar(): {
 };
 declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToOption<{
     /** When true, closes the command bar when ESC is pressed. */
-    allowEscape?: boolean | undefined;
+    allowEscape?: boolean;
     /** When true, repeats the most recent command when ⌘. is pressed. */
-    allowRepeat?: boolean | undefined;
+    allowRepeat?: boolean;
     /** Allows you to set a custom hotkey. Defaults to ⌘K. */
-    hotkey?: Partial<Pick<KeyboardEvent, "key" | "metaKey" | "altKey" | "ctrlKey" | "shiftKey">> | undefined;
+    hotkey?: KeyboardShortcut;
     /** Limit the number of results that are shown. Defaults to 10. */
-    limitResults?: number | undefined;
+    limitResults?: number;
     /** Changes the placeholder of the search field. Defaults to "Search...". */
-    placeholder?: string | undefined;
+    placeholder?: string;
 }>, {
     allowEscape: boolean;
     allowRepeat: boolean;
@@ -85,15 +85,15 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     placeholder: string;
 }>, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToOption<{
     /** When true, closes the command bar when ESC is pressed. */
-    allowEscape?: boolean | undefined;
+    allowEscape?: boolean;
     /** When true, repeats the most recent command when ⌘. is pressed. */
-    allowRepeat?: boolean | undefined;
+    allowRepeat?: boolean;
     /** Allows you to set a custom hotkey. Defaults to ⌘K. */
-    hotkey?: Partial<Pick<KeyboardEvent, "key" | "metaKey" | "altKey" | "ctrlKey" | "shiftKey">> | undefined;
+    hotkey?: KeyboardShortcut;
     /** Limit the number of results that are shown. Defaults to 10. */
-    limitResults?: number | undefined;
+    limitResults?: number;
     /** Changes the placeholder of the search field. Defaults to "Search...". */
-    placeholder?: string | undefined;
+    placeholder?: string;
 }>, {
     allowEscape: boolean;
     allowRepeat: boolean;
@@ -114,6 +114,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     empty?(_: {}): any;
 }>;
 export default _default;
+
 type __VLS_WithDefaults<P, D> = {
     [K in keyof Pick<P, keyof P>]: K extends keyof D ? __VLS_Prettify<P[K] & {
         default: D[K];
