@@ -9,11 +9,13 @@
 > ⚠️ Work in progress. Things are most certainly incomplete and/or broken, and will definitely change.
 
 - 🚀 Fast, efficient, keyboard-driven UX
-- 😌 Simple and opinionated
+- 😌 Opinionated: it doesn't do much, but what it does is very easy to use
 - 👌 Fully typed and tested
 - 🛝 Check out Tasks for a [demo](https://tasks.a13i.dev) and [example usage](https://github.com/andreasphil/tasks)
 
 ## Installation
+
+With a package manager:
 
 ```sh
 npm i github:andreasphil/vue-command-bar#<tag>
@@ -65,12 +67,13 @@ To learn more about the available props, check out the docs in [CommandBar.vue](
 
 ## Development
 
-The library is compatible with [Vue 3](https://vuejs.org) and built with [Vite](https://vitejs.dev). Packages are managed by [pnpm](https://pnpm.io). Tests are powered by [Vitest](https://vitest.dev). The following commands are available for developing and running the demo:
+Command Bar is compatible with [Vue 3](https://vuejs.org) and built with [Vite](https://vitejs.dev). Packages are managed by [pnpm](https://pnpm.io). Tests are powered by [Vitest](https://vitest.dev). The following commands are available:
 
-```
-pnpm run dev       # Start development server
-pnpm run build     # Create a production bundle
-pnpm run test      # Run tests
+```sh
+pnpm dev          # Start development server
+pnpm test         # Run tests once
+pnpm test:watch   # Run tests in watch mode
+pnpm build        # Bundle for production
 ```
 
 ## Credits
