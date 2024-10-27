@@ -63,7 +63,7 @@ export declare function useCommandBar(): {
     removeCommand(..._: string[]): void;
     open(_?: string): void;
 };
-declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToOption<{
+declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<{
     /** When true, closes the command bar when ESC is pressed. */
     allowEscape?: boolean;
     /** When true, repeats the most recent command when ⌘. is pressed. */
@@ -74,16 +74,11 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     limitResults?: number;
     /** Changes the placeholder of the search field. Defaults to "Search...". */
     placeholder?: string;
-}>, {
-    allowEscape: boolean;
-    allowRepeat: boolean;
-    hotkey: () => {
-        key: string;
-        metaKey: boolean;
-    };
-    limitResults: number;
-    placeholder: string;
-}>, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToOption<{
+}, {
+    registerCommand: (...toRegister: Command[]) => () => void;
+    removeCommand: (...toRemove: string[]) => void;
+    open: (initialQuery?: string) => void;
+}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<{
     /** When true, closes the command bar when ESC is pressed. */
     allowEscape?: boolean;
     /** When true, repeats the most recent command when ⌘. is pressed. */
@@ -94,46 +89,19 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     limitResults?: number;
     /** Changes the placeholder of the search field. Defaults to "Search...". */
     placeholder?: string;
-}>, {
-    allowEscape: boolean;
-    allowRepeat: boolean;
-    hotkey: () => {
-        key: string;
-        metaKey: boolean;
-    };
-    limitResults: number;
-    placeholder: string;
-}>>>, {
+}> & Readonly<{}>, {
     allowEscape: boolean;
     allowRepeat: boolean;
     hotkey: KeyboardShortcut;
     limitResults: number;
     placeholder: string;
-}, {}>, {
+}, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>, {
     default?(_: {}): any;
     empty?(_: {}): any;
 }>;
 export default _default;
-
-type __VLS_WithDefaults<P, D> = {
-    [K in keyof Pick<P, keyof P>]: K extends keyof D ? __VLS_Prettify<P[K] & {
-        default: D[K];
-    }> : P[K];
-};
-type __VLS_Prettify<T> = {
-    [K in keyof T]: T[K];
-} & {};
 type __VLS_WithTemplateSlots<T, S> = T & {
     new (): {
         $slots: S;
-    };
-};
-type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
-type __VLS_TypePropsToOption<T> = {
-    [K in keyof T]-?: {} extends Pick<T, K> ? {
-        type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
-    } : {
-        type: import('vue').PropType<T[K]>;
-        required: true;
     };
 };
