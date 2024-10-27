@@ -224,6 +224,8 @@ provide(CommandBarContext, {
   removeCommand,
   open: openWithQuery,
 });
+
+defineExpose({ registerCommand, removeCommand, open: openWithQuery });
 </script>
 
 <script lang="ts">
