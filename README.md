@@ -1,12 +1,14 @@
 <h1 align="center">
-  Command Bar 🐝
+  Command Bar 🐜
 </h1>
 
 <p align="center">
   <strong>Simple `⌘K` command bar for Vue</strong>
 </p>
 
-> ⚠️ Work in progress. Things are most certainly incomplete and/or broken, and will definitely change.
+> [!IMPORTANT]
+>
+> This has been re-implemented as a [native web component](https://github.com/andreasphil/command-bar/) and is no longer maintained.
 
 - 🚀 Fast, efficient, keyboard-driven UX
 - 😌 Opinionated: it doesn't do much, but what it does is very easy to use
